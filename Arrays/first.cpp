@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+
 using namespace std;
 
 void printArray(vector<int>& arr) {
@@ -10,7 +11,6 @@ void printArray(vector<int>& arr) {
         cout << arr[i]<< " ";
     }
     cout << endl;
-    
 }
 
 int findMaxConsecutiveOnes(vector<int>& nums) {
@@ -197,16 +197,16 @@ void moveZeroes(vector<int>& nums) {
     int i = 0;
     int j = 0;
 
-        while(i<nums.size() && j<nums.size()) {
-            if (nums[i] != 0) i++;
-            if (nums[j] == 0) j++;
-            if(i<nums.size() && j<nums.size() && i < j) {
-                int temp = nums[j];
-                nums[j] = nums[i];
-                nums[i] = temp; 
-            }
-            j++;
+    while(i<nums.size() && j<nums.size()) {
+        if (nums[i] != 0) i++;
+        if (nums[j] == 0) j++;
+        if(i<nums.size() && j<nums.size() && i < j) {
+            int temp = nums[j];
+            nums[j] = nums[i];
+            nums[i] = temp; 
         }
+        j++;
+    }
 }
 
 vector<int> sortArrayByParity(vector<int>& nums) {
@@ -247,12 +247,97 @@ int heightChecker(vector<int>& heights) {
     return total;
 }
 
+int thirdMax(vector<int>& nums) {
+    long long max1 = LONG_LONG_MIN;
+    long long max2 = LONG_LONG_MIN;
+    long long max3 = LONG_LONG_MIN;
+    bool flag = false;
+    cout<<LONG_LONG_MIN<<endl;
+    for(int i=0; i<nums.size(); i++) {
+        if (max1 == nums[i] || max2 == nums[i] || max3 == nums[i]) continue;
+        if(max1 <= nums[i]) {
+            max3 = max2;
+            max2 = max1;
+            max1 = nums[i];
+        } else if (max2 <= nums[i]) {
+            max3 = max2;
+            max2 = nums[i];
+        } else if(max3 <= nums[i]) {
+            max3 = nums[i];
+        }
+    }
+    return (max3 != LONG_LONG_MIN ? max3 : max1);    
+}
+
+bool binarySearch(vector<int>& nums, int key) {
+    int start = 0;
+    int end = nums.size() - 1;
+    int mid;
+    while(start <= end) {
+        mid = (start+end)/2;
+        if (nums[mid] == key) {
+            return true;
+        } else if (nums[mid] < key) {
+            start = mid+1;
+        } else if (nums[mid] > key) {
+            end = mid-1;
+        }
+    }
+    return false;
+}
+
+bool twoWayLinearSearch(vector<int>& nums, int key) {
+    int start = 0;
+    int end = nums.size() - 1;
+
+
+    while (start <= end) {
+        if (nums[start] == key){
+            cout << "Element found on index: " << start << endl;
+            return true;
+        } else if (nums[end] == key) {
+            cout << "Element found on index: " << end << endl;
+            return true;
+        }
+        start++;
+        end--;
+    }
+    cout << "Element not found" << endl;
+    return false;
+}
+
+void printArrayBool(vector<bool>& arr) {
+    for (int i = 0; i < arr.size(); i++) {
+        /* code */
+        cout << arr[i]<< " ";
+    }
+    cout << endl;
+}
+
+vector<int> findDisappearedNumbers(vector<int>& nums) {
+    vector<bool> seenElements(nums.size()+1);
+    vector<int> missingNums;
+
+    for (auto c: nums)
+        seenElements[c] = true;
+    printArrayBool(seenElements);
+
+    for (int i=1; i<=nums.size(); i++) {
+        if(!seenElements[i])
+            missingNums.push_back(i);
+    }
+    return missingNums;
+}
 int main()
 {
-    vector<int> nums1 = {0};
+    vector<int> nums1 = {4,3,2,7,8,2,3,1};
     printArray(nums1);
-    sortArrayByParity(nums1);
-    printArray(nums1);
+    // cout << twoWayLinearSearch(nums1, 1) << endl;
+    vector<int> missing_nums = findDisappearedNumbers(nums1);
+    printArray(missing_nums);
+    // cout << thirdMax(nums1) << endl;
+    // sortArrayByParity(nums1);
+    // printArray(nums1);
     // cout << removeElement(nums1, 3) << endl;
     // replaceElements(nums1);
     // moveZeroes(nums1);
