@@ -1,5 +1,11 @@
 {
     "files.associations": {
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "*.tcc": "cpp",
+        "vector": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "iostream": "cpp",
+        "cstddef": "cpp"
     }
 }
