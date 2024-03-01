@@ -345,38 +345,159 @@ bool binarySearch(vector<int>& nums, int key) {
 }
 
 int minSubArrayLen(int target, vector<int>& nums) {
-    sort(nums.begin(), nums.end());
-    if(nums[nums.size()-1] == target) {
-        return 1;
+    int n = nums.size();
+    vector<int> sums(n + 1, 0);
+    for (int i = 1; i <= n; ++i) {
+        sums[i] = sums[i - 1] + nums[i - 1];
     }
-    int minLen = 0;
-    for (int i=0; i<nums.size(); i++) {
-        int start = 0;
-        int end = nums.size() - 1;
-        int mid;
-        vector<int> req;
-        while(start <= end) {
-            mid = (start+end)/2;
-            if (nums[mid] == target) {
-                return true;
-            } else if (nums[mid] < target) {
-                start = mid+1;
-            } else if (nums[mid] > target) {
-                end = mid-1;
-            }
+
+    int minLength = n + 1;
+    printArray(sums);
+    for (int i = 0; i < n; ++i) {
+        int right = lower_bound(sums.begin() + i, sums.end(), target + sums[i]) - sums.begin();
+        // cout << "right " << right << endl;
+        if (right != n + 1) {
+            minLength = min(minLength, right - i);
+        }
+        // cout << "minLength " << minLength << endl;
+    }
+
+    return minLength == n + 1 ? 0 : minLength;
+}
+
+void rotate(vector<int>& nums, int k) {
+    k %= nums.size();
+    if (k<0)
+        k += nums.size();
+        
+    int i = 0;
+    int j = nums.size() - k - 1;
+    while (i < j) {
+        nums[i] = nums[i] + nums[j];
+        nums[j] = nums[i] - nums[j];
+        nums[i] = nums[i] - nums[j];
+        
+        i++;
+        j--;
+    }
+    i = nums.size() - k;
+    j = nums.size() - 1;
+    while (i < j) {
+        nums[i] = nums[i] + nums[j];
+        nums[j] = nums[i] - nums[j];
+        nums[i] = nums[i] - nums[j];
+        
+        i++;
+        j--;
+    }      
+    i = 0;
+    j = nums.size() - 1;
+    while (i < j) {
+        nums[i] = nums[i] + nums[j];
+        nums[j] = nums[i] - nums[j];
+        nums[i] = nums[i] - nums[j];
+        
+        i++;
+        j--;
+    }      
+}
+
+vector<int> getRow(int rowIndex) {
+    vector<int> result(rowIndex + 1, 0);
+    result[0] = 1;
+    for (int i = 1; i <= rowIndex; ++i) {
+        for (int j = i; j > 0; --j) {
+            result[j] += result[j - 1];
+        }
+        // printArray(result);
+    }
+    return result;
+}
+
+string reverseWords(string s) {
+    string word; 
+    vector<string> words;
+    for (int i=0; i<s.size(); i++) {
+        if(s[i] == ' ' && !word.empty()) {
+            words.push_back(word);
+            word.clear();
+            continue;
+        }
+        if(s[i] == ' ') {
+            continue;
+        }
+        word += s[i];
+    }
+    if(!word.empty()) {
+        words.push_back(word);
+        word.clear();
+    }
+    s.clear();
+    for (int i = words.size() - 1; i >= 0; --i) {
+        s += words[i];
+        if (i > 0) {
+            s += " ";
+        }
+    }
+    return s;
+}
+
+string reverseWords3(string s) {
+    int lastIndex = -1;
+    for (int startIndex=0; startIndex < s.size(); ++startIndex) {
+        int j=startIndex+1;
+        while (s[j] != ' ' && j != s.size()) {
+            j++;
+        }
+        lastIndex = j-1;
+
+        while (startIndex < lastIndex) {
+            s[startIndex] = s[startIndex] + s[lastIndex];
+            s[lastIndex] = s[startIndex] - s[lastIndex];
+            s[startIndex] = s[startIndex] - s[lastIndex];
+            
+            startIndex++;
+            lastIndex--;
         }
 
+        startIndex = j;
     }
+    return s;
+} 
 
-    return minLen;
+void moveZeroes(vector<int>& nums) {
+    int i = 0;
+    int j = 0;
+
+    while(i<nums.size() && j<nums.size()) {
+        if (nums[i] != 0) i++;
+        if(nums[j] == 0) j++;
+        if((i<nums.size() && j<nums.size()) && i < j) {
+            nums[i] = nums[i] + nums[j];
+            nums[j] = nums[i] - nums[j];
+            nums[i] = nums[i] - nums[j];
+        }
+        j++;
+    }
 }
 
 int main() {
-    vector<int> arr = {{3,3}};
-    vector<int> res = twoSum(arr, 6);
-    for(int i=0; i<res.size(); i++) {
-        cout << res[i] << " ";
-    }
+    string s = "Let's take LeetCode contest";
+    cout << s << endl;
+    cout << reverseWords3(s) << endl;
+    // vector<int> res = getRow(3);
+    // printArray(res);
+    // vector<int> arr = {1,2,3};
+    // printArray(arr);
+    // rotate(arr, 4);
+    // printArray(arr);
+
+    // cout << minSubArrayLen(15, arr) << endl;
+    // vector<int> arr = {{3,3}};
+    // vector<int> res = twoSum(arr, 6);
+    // for(int i=0; i<res.size(); i++) {
+    //     cout << res[i] << " ";
+    // }
     // cout << arrayPairSum(arr) << endl;
     // vector<char> s = {'s', 'a', 'a', 'd'};
     // for(int i=0; i<s.size(); i++) {
